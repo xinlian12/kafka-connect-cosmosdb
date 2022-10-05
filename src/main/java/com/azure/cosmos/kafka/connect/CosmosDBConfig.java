@@ -3,15 +3,8 @@
 
 package com.azure.cosmos.kafka.connect;
 
-import static com.azure.cosmos.kafka.connect.CosmosDBConfig.CosmosClientBuilder.createClient;
-
 import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.kafka.connect.sink.CosmosDBSinkConfig;
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
-import java.util.regex.Pattern;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigDef.Importance;
@@ -19,10 +12,12 @@ import org.apache.kafka.common.config.ConfigDef.NonEmptyString;
 import org.apache.kafka.common.config.ConfigDef.Type;
 import org.apache.kafka.common.config.ConfigDef.Validator;
 import org.apache.kafka.common.config.ConfigDef.Width;
+import org.apache.kafka.common.config.ConfigValue;
 
 import java.util.Map;
-import org.apache.kafka.common.config.ConfigException;
-import org.apache.kafka.common.config.ConfigValue;
+import java.util.regex.Pattern;
+
+import static com.azure.cosmos.kafka.connect.CosmosDBConfig.CosmosClientBuilder.createClient;
 
 @SuppressWarnings({"squid:S1854", "squid:S2160"})  // suppress unneeded int *groupOrder variables, equals method
 public class CosmosDBConfig extends AbstractConfig {
@@ -74,6 +69,11 @@ public class CosmosDBConfig extends AbstractConfig {
     private static final String COSMOS_SINK_MAX_RETRY_COUNT_DOC =
             "Cosmos DB max retry attempts on write failures for Sink connector. By default, the connector will retry on transient write errors for up to 10 times.";
     private static final int DEFAULT_COSMOS_SINK_MAX_RETRY_COUNT = 10;
+
+    public static final String COSMOS_SOURCE_LEASE_CONTAINER_NAME_SUFFIX = "connect.cosmos.source.leaseContainerName.suffix";
+    private static final String COSMOS_SOURCE_LEASE_CONTAINER_NAME_SUFFIX_DOC =
+            "Lease container name suffix. By default it is 'lease'";
+    private static final String DEFAULT_COSMOS_SOURCE_LEASE_CONTAINER_NAME_SUFFIX = "leases";
         
     public static final String COSMOS_PROVIDER_NAME_CONF = "connect.cosmos.provider.name";
     private static final String COSMOS_PROVIDER_NAME_DEFAULT = null;
@@ -94,6 +94,7 @@ public class CosmosDBConfig extends AbstractConfig {
     private final boolean gatewayModeEnabled;
     private final boolean connectionSharingEnabled;
     private final int maxRetryCount;
+    private final String leaseContainerNameSuffix;
     private TopicContainerMap topicContainerMap = TopicContainerMap.empty();
 
     public CosmosDBConfig(ConfigDef config, Map<String, String> parsedConfig) {
@@ -108,6 +109,7 @@ public class CosmosDBConfig extends AbstractConfig {
         this.maxRetryCount = this.getInt(COSMOS_SINK_MAX_RETRY_COUNT);
         this.gatewayModeEnabled = this.getBoolean(COSMOS_GATEWAY_MODE_ENABLED);
         this.connectionSharingEnabled = this.getBoolean(COSMOS_CONNECTION_SHARING_ENABLED);
+        this.leaseContainerNameSuffix = this.getString(COSMOS_SOURCE_LEASE_CONTAINER_NAME_SUFFIX);
     }
 
     public CosmosDBConfig(Map<String, String> parsedConfig) {
@@ -183,6 +185,13 @@ public class CosmosDBConfig extends AbstractConfig {
                         DEFAULT_COSMOS_CONNECTION_SHARING_ENABLED,
                         Importance.LOW,
                         COSMOS_CONNECTION_SHARING_ENABLED_DOC
+                )
+                .define(
+                        COSMOS_SOURCE_LEASE_CONTAINER_NAME_SUFFIX,
+                        Type.STRING,
+                        DEFAULT_COSMOS_SOURCE_LEASE_CONTAINER_NAME_SUFFIX,
+                        Importance.LOW,
+                        COSMOS_SOURCE_LEASE_CONTAINER_NAME_SUFFIX_DOC
                 )
                 .defineInternal(
                         COSMOS_PROVIDER_NAME_CONF,
@@ -260,6 +269,10 @@ public class CosmosDBConfig extends AbstractConfig {
 
     public boolean isConnectionSharingEnabled() {
         return this.connectionSharingEnabled;
+    }
+
+    public String getLeaseContainerNameSuffix() {
+        return this.leaseContainerNameSuffix;
     }
 
     public static void validateConnection(Map<String, String> connectorConfigs, Map<String, ConfigValue> configValues) {

@@ -64,7 +64,7 @@ public class CosmosDBSourceTask extends SourceTask {
         CosmosAsyncDatabase database = client.getDatabase(config.getDatabaseName());
         String container = config.getAssignedContainer();
         CosmosAsyncContainer feedContainer = database.getContainer(container);
-        leaseContainer = createNewLeaseContainer(client, config.getDatabaseName(), container + "-leases");
+        leaseContainer = createNewLeaseContainer(client, config.getDatabaseName(), container + "-" + config.getLeaseContainerNameSuffix());
 
         // Create source partition map
         partitionMap = new HashMap<>();
