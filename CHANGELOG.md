@@ -2,16 +2,17 @@
 
 ### 1.18.0 (2025-11-17)
 #### Key Bug Fixes
-* Updated `azure-cosmos` version to `4.75.0` to address these security vulnerabilities.
+* Updated `azure-cosmos` version to `4.75.0` to address these security vulnerabilities. - [PR 585](https://github.com/microsoft/kafka-connect-cosmosdb/pull/585)
   https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-52999
   https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-58057,
   https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-58056
   https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-55163
   https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-22227
-* Updated `kafka-connect-client` version to `4.0.5` in test scope.
-* Updated commons-collections4 version to `4.5.0`
-* Updated commons-lang3 version to `3.20.0` to address the security vulnerability
+* Updated `kafka-connect-client` version to `4.0.5` in test scope. - [PR 585](https://github.com/microsoft/kafka-connect-cosmosdb/pull/585)
+* Updated `commons-collections4` version to `4.5.0`. - [PR 585](https://github.com/microsoft/kafka-connect-cosmosdb/pull/585)
+* Updated `commons-lang3 version` to `3.20.0` to address the security vulnerability. - [PR 585](https://github.com/microsoft/kafka-connect-cosmosdb/pull/585)
   https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-48924
+* Updated `json-path` to version `2.10.0`. - [PR 585](https://github.com/microsoft/kafka-connect-cosmosdb/pull/585)
 
 ### 1.17.0 (2025-02-24)
 #### Key Bug Fixes
